@@ -12,12 +12,16 @@ const tabelle = document.getElementById("ausgaben-tabelle");
 const leerHinweis = document.getElementById("leer-hinweis");
 const gesamtsummeAnzeige = document.getElementById("gesamtsumme");
 const kategorieSummenListe = document.getElementById("kategorie-summen");
+const monatAnzeige = document.getElementById("monat-anzeige");
 
 // Alle Ausgaben werden in diesem Array gehalten
 let ausgaben = laden();
 
 // ID der Ausgabe, die gerade bearbeitet wird (null = keine)
 let bearbeitungsId = null;
+
+// Monat, der gerade angezeigt wird, z. B. "2026-10" – beim Start der aktuelle Monat
+let gewaehlterMonat = alsIsoDatum(new Date()).slice(0, 7);
 
 // Gespeicherte Ausgaben aus dem Browser laden
 function laden() {
@@ -41,12 +45,44 @@ function alsDeutschesDatum(isoDatum) {
   return `${tag}.${monat}.${jahr}`;
 }
 
+// Datum (Date-Objekt) in "2026-10-10" umwandeln
+function alsIsoDatum(datum) {
+  return [
+    datum.getFullYear(),
+    String(datum.getMonth() + 1).padStart(2, "0"),
+    String(datum.getDate()).padStart(2, "0"),
+  ].join("-");
+}
+
+// Nur die Ausgaben des gewählten Monats ("2026-10-..." beginnt mit "2026-10")
+function ausgabenImMonat() {
+  return ausgaben.filter((a) => a.datum.startsWith(gewaehlterMonat));
+}
+
+// Einen Monat vor (schritt = 1) oder zurück (schritt = -1) blättern
+function monatWechseln(schritt) {
+  const [jahr, monat] = gewaehlterMonat.split("-").map(Number);
+  // Date rechnet den Jahreswechsel selbst aus, z. B. Monat 13 -> Januar im nächsten Jahr
+  const neu = new Date(jahr, monat - 1 + schritt, 1);
+  gewaehlterMonat = alsIsoDatum(neu).slice(0, 7);
+  anzeigen();
+}
+
 // Liste und Gesamtsumme neu auf die Seite zeichnen
 function anzeigen() {
   liste.innerHTML = "";
 
+  // Monatsnamen anzeigen, z. B. "Oktober 2026"
+  const [jahr, monat] = gewaehlterMonat.split("-").map(Number);
+  monatAnzeige.textContent = new Date(jahr, monat - 1, 1).toLocaleString("de-DE", {
+    month: "long",
+    year: "numeric",
+  });
+
+  const monatsAusgaben = ausgabenImMonat();
+
   // Neueste Ausgaben zuerst anzeigen
-  const sortiert = [...ausgaben].sort((a, b) => b.datum.localeCompare(a.datum));
+  const sortiert = [...monatsAusgaben].sort((a, b) => b.datum.localeCompare(a.datum));
 
   for (const ausgabe of sortiert) {
     // Die Ausgabe, die gerade bearbeitet wird, bekommt Eingabefelder statt Text
@@ -86,22 +122,22 @@ function anzeigen() {
   }
 
   // Tabelle nur zeigen, wenn es Einträge gibt
-  const keineEintraege = ausgaben.length === 0;
+  const keineEintraege = monatsAusgaben.length === 0;
   tabelle.hidden = keineEintraege;
   leerHinweis.hidden = !keineEintraege;
 
-  // Gesamtsumme berechnen
-  const summe = ausgaben.reduce((gesamt, a) => gesamt + a.betrag, 0);
+  // Gesamtsumme des Monats berechnen
+  const summe = monatsAusgaben.reduce((gesamt, a) => gesamt + a.betrag, 0);
   gesamtsummeAnzeige.textContent = alsEuro(summe);
 
-  kategorieSummenAnzeigen();
+  kategorieSummenAnzeigen(monatsAusgaben);
 }
 
-// Summe pro Kategorie berechnen und unter der Gesamtsumme anzeigen
-function kategorieSummenAnzeigen() {
+// Summe pro Kategorie berechnen und mit Balken unter der Gesamtsumme anzeigen
+function kategorieSummenAnzeigen(monatsAusgaben) {
   // Beträge pro Kategorie zusammenzählen, z. B. { Lebensmittel: 54.2, Freizeit: 20 }
   const summen = {};
-  for (const ausgabe of ausgaben) {
+  for (const ausgabe of monatsAusgaben) {
     summen[ausgabe.kategorie] = (summen[ausgabe.kategorie] || 0) + ausgabe.betrag;
   }
 
@@ -109,6 +145,9 @@ function kategorieSummenAnzeigen() {
 
   // Kategorien mit den höchsten Ausgaben zuerst
   const sortiert = Object.entries(summen).sort((a, b) => b[1] - a[1]);
+
+  // Die größte Kategorie steht zuerst – ihr Balken ist 100 % breit
+  const groessterBetrag = sortiert.length > 0 ? sortiert[0][1] : 0;
 
   for (const [kategorie, betrag] of sortiert) {
     const eintrag = document.createElement("li");
@@ -119,8 +158,17 @@ function kategorieSummenAnzeigen() {
     const wert = document.createElement("span");
     wert.textContent = alsEuro(betrag);
 
+    // Balken: Breite im Verhältnis zur größten Kategorie
+    const spur = document.createElement("div");
+    spur.className = "balken-spur";
+    const balken = document.createElement("div");
+    balken.className = "balken";
+    balken.style.width = (betrag / groessterBetrag) * 100 + "%";
+    spur.appendChild(balken);
+
     eintrag.appendChild(name);
     eintrag.appendChild(wert);
+    eintrag.appendChild(spur);
     kategorieSummenListe.appendChild(eintrag);
   }
 }
@@ -184,6 +232,8 @@ function bearbeitungsZeile(ausgabe) {
       ausgabe.beschreibung = beschreibung.value.trim();
       ausgabe.betrag = neuerBetrag;
       bearbeitungsId = null;
+      // Zum Monat der Ausgabe springen, falls das Datum in einen anderen Monat geändert wurde
+      gewaehlterMonat = ausgabe.datum.slice(0, 7);
       speichern();
       anzeigen();
     })
@@ -225,6 +275,9 @@ formular.addEventListener("submit", (ereignis) => {
     beschreibung: beschreibungFeld.value.trim(),
   });
 
+  // Zum Monat der neuen Ausgabe springen, damit sie sofort sichtbar ist
+  gewaehlterMonat = datumFeld.value.slice(0, 7);
+
   speichern();
   anzeigen();
 
@@ -234,11 +287,10 @@ formular.addEventListener("submit", (ereignis) => {
   betragFeld.focus();
 });
 
+// Pfeile zum Blättern zwischen den Monaten
+document.getElementById("monat-zurueck").addEventListener("click", () => monatWechseln(-1));
+document.getElementById("monat-vor").addEventListener("click", () => monatWechseln(1));
+
 // Beim Start: heutiges Datum vorausfüllen und Liste anzeigen
-const heute = new Date();
-datumFeld.value = [
-  heute.getFullYear(),
-  String(heute.getMonth() + 1).padStart(2, "0"),
-  String(heute.getDate()).padStart(2, "0"),
-].join("-");
+datumFeld.value = alsIsoDatum(new Date());
 anzeigen();

@@ -10,6 +10,13 @@
   <main>
     <h1>Haushaltsbuch</h1>
 
+    <!-- Monatsauswahl: Liste und Summen zeigen nur diesen Monat -->
+    <section class="karte monatswahl">
+      <button type="button" id="monat-zurueck" title="Vorheriger Monat">‹</button>
+      <strong id="monat-anzeige"></strong>
+      <button type="button" id="monat-vor" title="Nächster Monat">›</button>
+    </section>
+
     <!-- Formular zum Eintragen einer neuen Ausgabe -->
     <section class="karte">
       <h2>Neue Ausgabe</h2>
@@ -56,10 +63,10 @@
       <ul id="kategorie-summen"></ul>
     </section>
 
-    <!-- Liste aller Ausgaben -->
+    <!-- Liste der Ausgaben im gewählten Monat -->
     <section class="karte">
-      <h2>Alle Ausgaben</h2>
-      <p id="leer-hinweis">Noch keine Ausgaben eingetragen.</p>
+      <h2>Ausgaben im Monat</h2>
+      <p id="leer-hinweis">Keine Ausgaben in diesem Monat.</p>
       <table id="ausgaben-tabelle">
         <thead>
           <tr>

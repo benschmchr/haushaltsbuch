@@ -10,6 +10,7 @@ Haushaltsbuch is a German-language expense tracker built with plain HTML, CSS an
 
 - **State and persistence:** All expenses live in the global `ausgaben` array in `script.js`. Each expense is `{ id, betrag, kategorie, datum, beschreibung }`, where `id` is `Date.now()` and `datum` is an ISO `YYYY-MM-DD` string. `speichern()` writes the array to `localStorage` under the key `haushaltsbuch-ausgaben`, and `laden()` reads it back. There is no backend.
 - **Render loop:** Every change follows the same pattern: mutate `ausgaben`, call `speichern()`, then call `anzeigen()`. `anzeigen()` rebuilds the whole table and the totals from scratch, and calls `kategorieSummenAnzeigen()` for the per-category totals. No DOM is updated incrementally.
+- **Month view:** `gewaehlterMonat` (`"YYYY-MM"`) filters what `anzeigen()` shows via `ausgabenImMonat()`. All expenses are still stored. Adding or editing an expense jumps the view to that expense's month.
 - **Inline editing:** `bearbeitungsId` holds the id of the row being edited. When `anzeigen()` reaches that row, it renders `bearbeitungsZeile()` (input fields) in place of the normal row.
 - **Categories:** The categories are defined only once, as `<option>`s of `#kategorie` in `index.html`. The edit row copies its options from that select. To add or rename a category, change only the HTML.
 
@@ -17,6 +18,7 @@ Haushaltsbuch is a German-language expense tracker built with plain HTML, CSS an
 
 - Antworte auf Deutsch und erkläre für einen Anfänger.
 - Commit-Nachrichten auf Deutsch.
+- Direkt auf `main` arbeiten und committen, keine eigenen Branches anlegen.
 - Nur HTML, CSS und JavaScript, keine Frameworks oder externen Bibliotheken.
 - Kleine Schritte: Nach jeder Änderung sagen, wie man sie im Browser prüfen kann.
 
