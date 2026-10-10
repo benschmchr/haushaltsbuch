@@ -66,6 +66,16 @@ button:hover {
   background: #1d4ed8;
 }
 
+/* Ausgegrauter Knopf, z. B. Export ohne Ausgaben im Monat */
+button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+#export-knopf {
+  margin-bottom: 12px;
+}
+
 form button {
   grid-column: 1 / -1;
 }

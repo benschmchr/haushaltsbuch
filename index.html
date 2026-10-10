@@ -66,6 +66,7 @@
     <!-- Liste der Ausgaben im gewählten Monat -->
     <section class="karte">
       <h2>Ausgaben im Monat</h2>
+      <button type="button" id="export-knopf">Als Excel-Datei herunterladen</button>
       <p id="leer-hinweis">Keine Ausgaben in diesem Monat.</p>
       <table id="ausgaben-tabelle">
         <thead>
@@ -82,6 +83,8 @@
     </section>
   </main>
 
+  <!-- Bibliothek SheetJS (lokale Datei) zum Erstellen von Excel-Dateien -->
+  <script src="lib/xlsx.full.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

@@ -47,6 +47,18 @@ Vor dem Test `index.html` im Browser öffnen bzw. mit F5 neu laden.
 - [ ] Von Januar mit ‹ zurückblättern: Es erscheint Dezember des Vorjahres. Von Dezember mit ›: Januar des Folgejahres.
 - [ ] Eine Ausgabe mit Datum in einem anderen Monat hinzufügen: Die Ansicht springt dorthin.
 
+## Excel-Export
+- [ ] Auf „Als Excel-Datei herunterladen“ klicken: Die Datei `ausgaben-JJJJ-MM.xlsx` landet im Download-Ordner.
+- [ ] Excel öffnet die Datei ohne Warnung. Das Blatt heißt wie der Monat, z. B. „Oktober 2026“.
+- [ ] Es stehen nur die Ausgaben des gewählten Monats drin, die älteste oben.
+- [ ] Datum im Format `TT.MM.JJJJ`, genau wie auf der Seite (nicht um einen Tag verschoben).
+- [ ] Beträge im Format `12,50 €`. Die Zeile „Summe“ zeigt dieselbe Gesamtsumme wie die Seite.
+- [ ] In Excel einen Betrag ändern: Die Summe rechnet sich neu.
+- [ ] Umlaute stimmen, z. B. „Mobilität“.
+- [ ] Beschreibung `=1+1`: In Excel steht der Text `=1+1`, nicht `2`.
+- [ ] Monat ohne Ausgaben: Der Knopf ist grau und lässt sich nicht klicken.
+- [ ] Ohne Internet (WLAN aus) funktioniert der Export trotzdem.
+
 ## Speichern
 - [ ] Die Seite neu laden (F5): Alle Ausgaben sind noch da, auch die aus anderen Monaten.
 

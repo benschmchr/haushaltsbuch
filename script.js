@@ -13,6 +13,7 @@ const leerHinweis = document.getElementById("leer-hinweis");
 const gesamtsummeAnzeige = document.getElementById("gesamtsumme");
 const kategorieSummenListe = document.getElementById("kategorie-summen");
 const monatAnzeige = document.getElementById("monat-anzeige");
+const exportKnopf = document.getElementById("export-knopf");
 
 // Alle Ausgaben werden in diesem Array gehalten
 let ausgaben = laden();
@@ -125,6 +126,7 @@ function anzeigen() {
   const keineEintraege = monatsAusgaben.length === 0;
   tabelle.hidden = keineEintraege;
   leerHinweis.hidden = !keineEintraege;
+  exportKnopf.disabled = keineEintraege; // ohne Ausgaben gibt es nichts zu exportieren
 
   // Gesamtsumme des Monats berechnen
   const summe = monatsAusgaben.reduce((gesamt, a) => gesamt + a.betrag, 0);
@@ -171,6 +173,44 @@ function kategorieSummenAnzeigen(monatsAusgaben) {
     eintrag.appendChild(spur);
     kategorieSummenListe.appendChild(eintrag);
   }
+}
+
+// Ausgaben des gewählten Monats als Excel-Datei (.xlsx) herunterladen – mit der Bibliothek SheetJS (XLSX)
+function alsExcelHerunterladen() {
+  // Für Excel üblich: älteste Ausgabe zuerst
+  const sortiert = [...ausgabenImMonat()].sort((a, b) => a.datum.localeCompare(b.datum));
+
+  // Tabelle als Liste von Zeilen, jede Zeile ist eine Liste von Zellen
+  const zeilen = [["Datum", "Kategorie", "Beschreibung", "Betrag"]];
+  for (const ausgabe of sortiert) {
+    // Echtes Datum statt Text, damit Excel danach sortieren kann
+    const [jahr, monat, tag] = ausgabe.datum.split("-").map(Number);
+    zeilen.push([new Date(jahr, monat - 1, tag), ausgabe.kategorie, ausgabe.beschreibung, ausgabe.betrag]);
+  }
+
+  // Letzte Zeile: Summe als Excel-Formel, z. B. =SUM(D2:D6)
+  // (v ist der schon ausgerechnete Wert, den Excel bis zum Neuberechnen zeigt)
+  const letzteZeile = sortiert.length + 1;
+  const summe = sortiert.reduce((gesamt, a) => gesamt + a.betrag, 0);
+  zeilen.push(["Summe", "", "", { t: "n", v: summe, f: `SUM(D2:D${letzteZeile})` }]);
+
+  // Tabellenblatt erstellen, Datum im deutschen Format anzeigen
+  const blatt = XLSX.utils.aoa_to_sheet(zeilen, { dateNF: "dd.mm.yyyy" });
+
+  // Beträge (Spalte D, ab Zeile 2 bis zur Summe) als Euro anzeigen
+  for (let nr = 2; nr <= letzteZeile + 1; nr++) {
+    blatt["D" + nr].z = '#,##0.00 "€"';
+  }
+
+  // Spaltenbreiten (in Zeichen)
+  blatt["!cols"] = [{ wch: 12 }, { wch: 14 }, { wch: 30 }, { wch: 12 }];
+
+  // Arbeitsmappe mit einem Blatt, das wie der Monat heißt, z. B. "Oktober 2026"
+  const mappe = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(mappe, blatt, monatAnzeige.textContent);
+
+  // Datei speichern, z. B. "ausgaben-2026-10.xlsx"
+  XLSX.writeFile(mappe, `ausgaben-${gewaehlterMonat}.xlsx`);
 }
 
 // Kleinen Knopf mit Symbol erstellen (für Bearbeiten, Löschen, Speichern, Abbrechen)
@@ -290,6 +330,9 @@ formular.addEventListener("submit", (ereignis) => {
 // Pfeile zum Blättern zwischen den Monaten
 document.getElementById("monat-zurueck").addEventListener("click", () => monatWechseln(-1));
 document.getElementById("monat-vor").addEventListener("click", () => monatWechseln(1));
+
+// Knopf für den Excel-Export
+exportKnopf.addEventListener("click", alsExcelHerunterladen);
 
 // Beim Start: heutiges Datum vorausfüllen und Liste anzeigen
 datumFeld.value = alsIsoDatum(new Date());
