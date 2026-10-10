@@ -194,8 +194,9 @@ function alsExcelHerunterladen() {
   const summe = sortiert.reduce((gesamt, a) => gesamt + a.betrag, 0);
   zeilen.push(["Summe", "", "", { t: "n", v: summe, f: `SUM(D2:D${letzteZeile})` }]);
 
-  // Tabellenblatt erstellen, Datum im deutschen Format anzeigen
-  const blatt = XLSX.utils.aoa_to_sheet(zeilen, { dateNF: "dd.mm.yyyy" });
+  // Tabellenblatt erstellen, Datum im deutschen Format anzeigen.
+  // Die Punkte brauchen ein "\" davor, sonst hält SheetJS sie für Sekundenbruchteile.
+  const blatt = XLSX.utils.aoa_to_sheet(zeilen, { dateNF: "dd\\.mm\\.yyyy" });
 
   // Beträge (Spalte D, ab Zeile 2 bis zur Summe) als Euro anzeigen
   for (let nr = 2; nr <= letzteZeile + 1; nr++) {
