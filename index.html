@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haushaltsbuch</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>Haushaltsbuch</h1>
+
+    <!-- Formular zum Eintragen einer neuen Ausgabe -->
+    <section class="karte">
+      <h2>Neue Ausgabe</h2>
+      <form id="ausgabe-formular">
+        <label>
+          Betrag (€)
+          <input type="number" id="betrag" step="0.01" min="0.01" required>
+        </label>
+
+        <label>
+          Kategorie
+          <select id="kategorie" required>
+            <option value="Lebensmittel">Lebensmittel</option>
+            <option value="Wohnen">Wohnen</option>
+            <option value="Mobilität">Mobilität</option>
+            <option value="Freizeit">Freizeit</option>
+            <option value="Gesundheit">Gesundheit</option>
+            <option value="Sonstiges">Sonstiges</option>
+          </select>
+        </label>
+
+        <label>
+          Datum
+          <input type="date" id="datum" required>
+        </label>
+
+        <label>
+          Beschreibung
+          <input type="text" id="beschreibung" placeholder="z. B. Wocheneinkauf">
+        </label>
+
+        <button type="submit">Hinzufügen</button>
+      </form>
+    </section>
+
+    <!-- Gesamtsumme -->
+    <section class="karte summe">
+      <span>Gesamtsumme</span>
+      <strong id="gesamtsumme">0,00 €</strong>
+    </section>
+
+    <!-- Liste aller Ausgaben -->
+    <section class="karte">
+      <h2>Alle Ausgaben</h2>
+      <p id="leer-hinweis">Noch keine Ausgaben eingetragen.</p>
+      <table id="ausgaben-tabelle">
+        <thead>
+          <tr>
+            <th>Datum</th>
+            <th>Kategorie</th>
+            <th>Beschreibung</th>
+            <th class="rechts">Betrag</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="ausgaben-liste"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
