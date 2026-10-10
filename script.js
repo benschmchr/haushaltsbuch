@@ -73,6 +73,13 @@ function ausgabenImMonat() {
   return ausgaben.filter((a) => a.datum.startsWith(gewaehlterMonat));
 }
 
+// Summe der Beträge, auf ganze Cent gerundet.
+// Ohne Runden rechnet JavaScript z. B. 0,1 + 0,2 = 0,30000000000000004.
+function summeBerechnen(liste) {
+  const summe = liste.reduce((gesamt, a) => gesamt + a.betrag, 0);
+  return Math.round(summe * 100) / 100;
+}
+
 // Einen Monat vor (schritt = 1) oder zurück (schritt = -1) blättern
 function monatWechseln(schritt) {
   const [jahr, monat] = gewaehlterMonat.split("-").map(Number);
@@ -142,7 +149,7 @@ function anzeigen() {
   exportKnopf.disabled = keineEintraege; // ohne Ausgaben gibt es nichts zu exportieren
 
   // Gesamtsumme des Monats berechnen
-  const summe = monatsAusgaben.reduce((gesamt, a) => gesamt + a.betrag, 0);
+  const summe = summeBerechnen(monatsAusgaben);
   gesamtsummeAnzeige.textContent = alsEuro(summe);
 
   budgetAnzeigen(summe);
@@ -386,7 +393,9 @@ exportKnopf.addEventListener("click", alsExcelHerunterladen);
 budgetFeld.addEventListener("input", () => {
   budget = parseFloat(budgetFeld.value) || 0;
   localStorage.setItem(BUDGET_SCHLUESSEL, budget);
-  anzeigen();
+  // Nur die Budget-Anzeige erneuern, nicht die ganze Tabelle –
+  // sonst gehen ungespeicherte Änderungen in einer Bearbeitungszeile verloren
+  budgetAnzeigen(summeBerechnen(ausgabenImMonat()));
 });
 
 // Gespeichertes Budget ins Feld schreiben

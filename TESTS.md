@@ -49,6 +49,8 @@ Vor dem Test `index.html` im Browser öffnen bzw. mit F5 neu laden.
 - [ ] Eine Ausgabe löschen oder bearbeiten: Text, Balken und Farbe passen sich sofort an.
 - [ ] Mit ‹ und › blättern: Das Budget bleibt gleich, der verbrauchte Anteil gilt jeweils für den angezeigten Monat.
 - [ ] Monat ohne Ausgaben: „0,00 € von 100,00 € verbraucht (0 %)“, leerer Balken.
+- [ ] Ausgaben ergeben genau das Budget (z. B. 20,12 + 30,92 + 23,19 + 1,58 + 5,95 + 2,93 + 15,31 = 100 €): Text „… (100 %) – noch 0,00 € übrig“ in Orange, nicht rot.
+- [ ] Eine Ausgabe mit ✎ bearbeiten, Betrag ändern, aber nicht speichern. Dann das Budget ändern: Die Bearbeitungszeile bleibt offen, der geänderte Betrag steht noch drin.
 - [ ] Seite neu laden (F5): Das Budget steht noch im Feld.
 - [ ] Feld leeren: Text und Balken verschwinden, auch nach F5.
 - [ ] Handy-Ansicht: Feld und Text passen in den weißen Kasten.
