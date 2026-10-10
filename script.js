@@ -11,6 +11,7 @@ const liste = document.getElementById("ausgaben-liste");
 const tabelle = document.getElementById("ausgaben-tabelle");
 const leerHinweis = document.getElementById("leer-hinweis");
 const gesamtsummeAnzeige = document.getElementById("gesamtsumme");
+const kategorieSummenListe = document.getElementById("kategorie-summen");
 
 // Alle Ausgaben werden in diesem Array gehalten
 let ausgaben = laden();
@@ -92,6 +93,36 @@ function anzeigen() {
   // Gesamtsumme berechnen
   const summe = ausgaben.reduce((gesamt, a) => gesamt + a.betrag, 0);
   gesamtsummeAnzeige.textContent = alsEuro(summe);
+
+  kategorieSummenAnzeigen();
+}
+
+// Summe pro Kategorie berechnen und unter der Gesamtsumme anzeigen
+function kategorieSummenAnzeigen() {
+  // Beträge pro Kategorie zusammenzählen, z. B. { Lebensmittel: 54.2, Freizeit: 20 }
+  const summen = {};
+  for (const ausgabe of ausgaben) {
+    summen[ausgabe.kategorie] = (summen[ausgabe.kategorie] || 0) + ausgabe.betrag;
+  }
+
+  kategorieSummenListe.innerHTML = "";
+
+  // Kategorien mit den höchsten Ausgaben zuerst
+  const sortiert = Object.entries(summen).sort((a, b) => b[1] - a[1]);
+
+  for (const [kategorie, betrag] of sortiert) {
+    const eintrag = document.createElement("li");
+
+    const name = document.createElement("span");
+    name.textContent = kategorie;
+
+    const wert = document.createElement("span");
+    wert.textContent = alsEuro(betrag);
+
+    eintrag.appendChild(name);
+    eintrag.appendChild(wert);
+    kategorieSummenListe.appendChild(eintrag);
+  }
 }
 
 // Kleinen Knopf mit Symbol erstellen (für Bearbeiten, Löschen, Speichern, Abbrechen)

@@ -82,6 +82,25 @@ form button {
   font-size: 1.5rem;
 }
 
+/* Summen pro Kategorie */
+#kategorie-summen {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+
+#kategorie-summen:empty {
+  display: none;
+}
+
+#kategorie-summen li {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-top: 1px solid #e5e7eb;
+  color: #4b5563;
+}
+
 /* Tabelle mit den Ausgaben */
 table {
   width: 100%;
