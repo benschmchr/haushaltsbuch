@@ -145,6 +145,38 @@ form button {
   background: #2563eb;
 }
 
+/* Monatsbudget unter der Gesamtsumme */
+.budget {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+#budget-text {
+  margin: 8px 0 0;
+  color: #4b5563;
+}
+
+/* Ab 80 % verbraucht: orange */
+#budget-text.warnung {
+  color: #b45309;
+  font-weight: bold;
+}
+
+.balken.warnung {
+  background: #f59e0b;
+}
+
+/* Budget überschritten: rot */
+#budget-text.ueberschritten {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.balken.ueberschritten {
+  background: #dc2626;
+}
+
 /* Tabelle mit den Ausgaben */
 table {
   width: 100%;

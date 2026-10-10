@@ -66,6 +66,16 @@
         <strong id="gesamtsumme">0,00 €</strong>
       </div>
 
+      <!-- Monatsbudget: gilt für jeden Monat, wird von script.js ausgewertet -->
+      <div class="budget">
+        <label>
+          Monatsbudget (€)
+          <input type="number" id="budget" step="0.01" min="0" placeholder="z. B. 1500">
+        </label>
+        <p id="budget-text"></p>
+        <div class="balken-spur" id="budget-spur"><div class="balken" id="budget-balken"></div></div>
+      </div>
+
       <!-- Summe pro Kategorie, wird von script.js gefüllt -->
       <ul id="kategorie-summen"></ul>
     </section>

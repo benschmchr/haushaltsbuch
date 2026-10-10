@@ -1,5 +1,7 @@
 // Name, unter dem die Daten im Browser (localStorage) gespeichert werden
 const SPEICHER_SCHLUESSEL = "haushaltsbuch-ausgaben";
+// Name, unter dem das Monatsbudget gespeichert wird
+const BUDGET_SCHLUESSEL = "haushaltsbuch-budget";
 
 // Elemente aus der HTML-Seite holen
 const formular = document.getElementById("ausgabe-formular");
@@ -14,6 +16,10 @@ const gesamtsummeAnzeige = document.getElementById("gesamtsumme");
 const kategorieSummenListe = document.getElementById("kategorie-summen");
 const monatAnzeige = document.getElementById("monat-anzeige");
 const exportKnopf = document.getElementById("export-knopf");
+const budgetFeld = document.getElementById("budget");
+const budgetText = document.getElementById("budget-text");
+const budgetSpur = document.getElementById("budget-spur");
+const budgetBalken = document.getElementById("budget-balken");
 
 // CSS-Klassen der Tabellenzellen (Datum, Kategorie, Beschreibung, Betrag).
 // Damit ordnet style.css die Zellen auf dem Handy als Kärtchen an.
@@ -27,6 +33,9 @@ let bearbeitungsId = null;
 
 // Monat, der gerade angezeigt wird, z. B. "2026-10" – beim Start der aktuelle Monat
 let gewaehlterMonat = alsIsoDatum(new Date()).slice(0, 7);
+
+// Monatsbudget in Euro, gilt für jeden Monat (0 = kein Budget festgelegt)
+let budget = Number(localStorage.getItem(BUDGET_SCHLUESSEL)) || 0;
 
 // Gespeicherte Ausgaben aus dem Browser laden
 function laden() {
@@ -62,6 +71,13 @@ function alsIsoDatum(datum) {
 // Nur die Ausgaben des gewählten Monats ("2026-10-..." beginnt mit "2026-10")
 function ausgabenImMonat() {
   return ausgaben.filter((a) => a.datum.startsWith(gewaehlterMonat));
+}
+
+// Summe der Beträge, auf ganze Cent gerundet.
+// Ohne Runden rechnet JavaScript z. B. 0,1 + 0,2 = 0,30000000000000004.
+function summeBerechnen(liste) {
+  const summe = liste.reduce((gesamt, a) => gesamt + a.betrag, 0);
+  return Math.round(summe * 100) / 100;
 }
 
 // Einen Monat vor (schritt = 1) oder zurück (schritt = -1) blättern
@@ -133,10 +149,43 @@ function anzeigen() {
   exportKnopf.disabled = keineEintraege; // ohne Ausgaben gibt es nichts zu exportieren
 
   // Gesamtsumme des Monats berechnen
-  const summe = monatsAusgaben.reduce((gesamt, a) => gesamt + a.betrag, 0);
+  const summe = summeBerechnen(monatsAusgaben);
   gesamtsummeAnzeige.textContent = alsEuro(summe);
 
+  budgetAnzeigen(summe);
   kategorieSummenAnzeigen(monatsAusgaben);
+}
+
+// Zeigen, wie viel vom Monatsbudget verbraucht ist – ab 80 % orange, darüber rot
+function budgetAnzeigen(summe) {
+  // Ohne Budget gibt es nichts anzuzeigen
+  const keinBudget = budget <= 0;
+  budgetText.hidden = keinBudget;
+  budgetSpur.hidden = keinBudget;
+  if (keinBudget) return;
+
+  // Anteil als Zahl: 0.5 = 50 %, 1 = 100 %, 1.2 = 120 %
+  const anteil = summe / budget;
+  const prozent = Math.round(anteil * 100);
+
+  let text = `${alsEuro(summe)} von ${alsEuro(budget)} verbraucht (${prozent} %) – `;
+  if (summe > budget) {
+    text += `${alsEuro(summe - budget)} über dem Budget`;
+  } else {
+    text += `noch ${alsEuro(budget - summe)} übrig`;
+  }
+  budgetText.textContent = text;
+
+  // Der Balken wird nie breiter als die graue Spur
+  budgetBalken.style.width = Math.min(anteil, 1) * 100 + "%";
+
+  // Farbe über CSS-Klassen: "warnung" = orange, "ueberschritten" = rot
+  const warnung = anteil >= 0.8 && anteil <= 1;
+  const ueberschritten = anteil > 1;
+  for (const element of [budgetText, budgetBalken]) {
+    element.classList.toggle("warnung", warnung);
+    element.classList.toggle("ueberschritten", ueberschritten);
+  }
 }
 
 // Summe pro Kategorie berechnen und mit Balken unter der Gesamtsumme anzeigen
@@ -339,6 +388,18 @@ document.getElementById("monat-vor").addEventListener("click", () => monatWechse
 
 // Knopf für den Excel-Export
 exportKnopf.addEventListener("click", alsExcelHerunterladen);
+
+// Budget speichern, sobald es geändert wird (leeres Feld = kein Budget)
+budgetFeld.addEventListener("input", () => {
+  budget = parseFloat(budgetFeld.value) || 0;
+  localStorage.setItem(BUDGET_SCHLUESSEL, budget);
+  // Nur die Budget-Anzeige erneuern, nicht die ganze Tabelle –
+  // sonst gehen ungespeicherte Änderungen in einer Bearbeitungszeile verloren
+  budgetAnzeigen(summeBerechnen(ausgabenImMonat()));
+});
+
+// Gespeichertes Budget ins Feld schreiben
+if (budget > 0) budgetFeld.value = budget;
 
 // Beim Start: heutiges Datum vorausfüllen und Liste anzeigen
 datumFeld.value = alsIsoDatum(new Date());
