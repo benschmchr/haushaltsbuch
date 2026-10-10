@@ -172,6 +172,14 @@ td {
 .klein {
   background: transparent;
   padding: 4px 8px;
+  min-width: 36px;
+  min-height: 36px;
+  font-size: 1.1rem;
+}
+
+/* Etwas Abstand zwischen zwei Knöpfen, damit man nicht den falschen trifft */
+.klein + .klein {
+  margin-left: 4px;
 }
 
 .bearbeiten {
@@ -219,9 +227,103 @@ td {
   font-size: 0.9rem;
 }
 
-/* Auf schmalen Bildschirmen (Handy) Formular einspaltig */
+/* Auf schmalen Bildschirmen (Handy) */
 @media (max-width: 500px) {
+  main {
+    padding: 16px 12px;
+  }
+
+  .karte {
+    padding: 16px;
+  }
+
+  /* Formular einspaltig */
   form {
     grid-template-columns: 1fr;
+  }
+
+  /* Tabelle wird zu einer Liste von Kärtchen: eine Ausgabe pro Block statt einer breiten Zeile */
+  table,
+  tbody {
+    display: block;
+  }
+
+  /* Spaltenüberschriften braucht man in der Kärtchen-Ansicht nicht */
+  thead {
+    display: none;
+  }
+
+  /* Jede Zeile als Raster:
+     Datum        Betrag
+     Kategorie    Knöpfe
+     Beschreibung Knöpfe */
+  tbody tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "datum        betrag"
+      "kategorie    knoepfe"
+      "beschreibung knoepfe";
+    column-gap: 8px;
+    padding: 10px 0;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  td {
+    padding: 2px 0;
+    border-bottom: none;
+  }
+
+  .zelle-datum {
+    grid-area: datum;
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+
+  .zelle-betrag {
+    grid-area: betrag;
+    font-weight: bold;
+  }
+
+  .zelle-kategorie {
+    grid-area: kategorie;
+    font-weight: bold;
+  }
+
+  .zelle-beschreibung {
+    grid-area: beschreibung;
+    color: #4b5563;
+    overflow-wrap: anywhere; /* lange Wörter umbrechen statt über den Rand zu ragen */
+  }
+
+  .knoepfe {
+    grid-area: knoepfe;
+    align-self: center;
+  }
+
+  /* Beim Bearbeiten brauchen die Eingabefelder mehr Platz: jedes Feld eine eigene Zeile */
+  tbody tr.wird-bearbeitet {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "datum        betrag"
+      "kategorie    kategorie"
+      "beschreibung beschreibung"
+      "knoepfe      knoepfe";
+    gap: 6px;
+    padding: 10px 8px;
+  }
+
+  /* Schriftgröße 16 px, sonst zoomt das iPhone beim Antippen hinein */
+  .wird-bearbeitet input,
+  .wird-bearbeitet select {
+    padding: 8px;
+    font-size: 1rem;
+  }
+
+  /* Knöpfe groß genug für den Finger (mindestens 44 × 44 Pixel) */
+  .klein {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 1.3rem;
   }
 }

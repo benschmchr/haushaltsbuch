@@ -15,6 +15,10 @@ const kategorieSummenListe = document.getElementById("kategorie-summen");
 const monatAnzeige = document.getElementById("monat-anzeige");
 const exportKnopf = document.getElementById("export-knopf");
 
+// CSS-Klassen der Tabellenzellen (Datum, Kategorie, Beschreibung, Betrag).
+// Damit ordnet style.css die Zellen auf dem Handy als Kärtchen an.
+const ZELLEN_KLASSEN = ["zelle-datum", "zelle-kategorie", "zelle-beschreibung", "zelle-betrag rechts"];
+
 // Alle Ausgaben werden in diesem Array gehalten
 let ausgaben = laden();
 
@@ -104,7 +108,7 @@ function anzeigen() {
     zellen.forEach((inhalt, index) => {
       const zelle = document.createElement("td");
       zelle.textContent = inhalt;
-      if (index === 3) zelle.className = "rechts";
+      zelle.className = ZELLEN_KLASSEN[index];
       zeile.appendChild(zelle);
     });
 
@@ -252,11 +256,12 @@ function bearbeitungsZeile(ausgabe) {
   betrag.min = "0.01";
   betrag.value = ausgabe.betrag;
 
-  for (const feld of [datum, kategorie, beschreibung, betrag]) {
+  [datum, kategorie, beschreibung, betrag].forEach((feld, index) => {
     const zelle = document.createElement("td");
+    zelle.className = ZELLEN_KLASSEN[index];
     zelle.appendChild(feld);
     zeile.appendChild(zelle);
-  }
+  });
 
   // Speichern übernimmt die Änderungen, Abbrechen verwirft sie
   const knopfZelle = document.createElement("td");
@@ -338,3 +343,9 @@ exportKnopf.addEventListener("click", alsExcelHerunterladen);
 // Beim Start: heutiges Datum vorausfüllen und Liste anzeigen
 datumFeld.value = alsIsoDatum(new Date());
 anzeigen();
+
+// Service Worker anmelden: Er speichert die Dateien der App, damit sie auch ohne Internet startet.
+// Klappt nur über http(s)://, nicht beim direkten Öffnen der Datei (file://).
+if ("serviceWorker" in navigator && location.protocol !== "file:") {
+  navigator.serviceWorker.register("sw.js");
+}

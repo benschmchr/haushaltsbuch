@@ -63,4 +63,22 @@ Vor dem Test `index.html` im Browser öffnen bzw. mit F5 neu laden.
 - [ ] Die Seite neu laden (F5): Alle Ausgaben sind noch da, auch die aus anderen Monaten.
 
 ## Handy-Ansicht
-- [ ] Das Browserfenster schmal ziehen, unter 500 px: Das Formular wird einspaltig.
+Am PC: F12 drücken, dann das Handy-Symbol (Gerätesymbolleiste) anklicken und z. B. „iPhone SE“ wählen.
+- [ ] Unter 500 px Breite: Das Formular wird einspaltig.
+- [ ] „Ausgaben im Monat“ zeigt jede Ausgabe als Kärtchen: oben Datum und Betrag, darunter Kategorie und Beschreibung, rechts die Knöpfe ✎ und ✕.
+- [ ] Nichts ragt über den weißen Kasten hinaus, man kann die Seite nicht seitwärts schieben.
+- [ ] Eine sehr lange Beschreibung ohne Leerzeichen (z. B. `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`) wird umgebrochen.
+- [ ] Die Knöpfe ✎ und ✕ sind groß genug, um sie mit dem Finger sicher zu treffen.
+- [ ] Auf ✎ tippen: Die Felder stehen untereinander (Datum und Betrag nebeneinander), ✓ und ↺ darunter.
+- [ ] Auf dem iPhone: Beim Antippen eines Feldes zoomt die Seite nicht hinein.
+- [ ] Am breiten Bildschirm sieht die Tabelle aus wie vorher.
+
+## Web-App (installieren und offline)
+Der Service Worker funktioniert nicht beim direkten Öffnen von `index.html` (`file://`). Zum Testen im Projektordner `python -m http.server 8000` starten und `http://localhost:8000` öffnen.
+- [ ] F12 → Reiter „Application“ (Anwendung) → „Manifest“: Name „Haushaltsbuch“ und das blaue €-Symbol werden angezeigt, keine Fehler.
+- [ ] Unter „Service workers“ steht `sw.js` als „activated and is running“.
+- [ ] In der Adressleiste erscheint ein Installieren-Symbol. Nach dem Installieren öffnet sich die App in einem eigenen Fenster ohne Adressleiste, mit dem €-Symbol.
+- [ ] Offline: In F12 → „Network“ den Haken „Offline“ setzen und neu laden (F5): Die App startet trotzdem, die Ausgaben sind da.
+- [ ] Offline eine Ausgabe hinzufügen und den Excel-Export benutzen: Beides funktioniert.
+- [ ] Auf dem Handy (Seite muss über https:// erreichbar sein): Android/Chrome „Zum Startbildschirm hinzufügen“ bzw. „App installieren“, iPhone/Safari „Teilen“ → „Zum Home-Bildschirm“. Das €-Symbol erscheint auf dem Startbildschirm.
+- [ ] Im Flugmodus die App vom Startbildschirm öffnen: Sie startet.

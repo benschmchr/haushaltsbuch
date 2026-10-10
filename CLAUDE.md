@@ -13,6 +13,8 @@ Haushaltsbuch is a German-language expense tracker built with plain HTML, CSS an
 - **Month view:** `gewaehlterMonat` (`"YYYY-MM"`) filters what `anzeigen()` shows via `ausgabenImMonat()`. All expenses are still stored. Adding or editing an expense jumps the view to that expense's month.
 - **Inline editing:** `bearbeitungsId` holds the id of the row being edited. When `anzeigen()` reaches that row, it renders `bearbeitungsZeile()` (input fields) in place of the normal row.
 - **Excel export:** `alsExcelHerunterladen()` builds an `.xlsx` from `ausgabenImMonat()` with SheetJS: real date cells, amounts as numbers in euro format, and a closing `SUM` formula row. The button `#export-knopf` is disabled when the month is empty.
+- **Mobile layout:** Below 500px the table turns into one card per expense via CSS grid areas. The cells get their classes from `ZELLEN_KLASSEN` in `script.js`; normal and edit rows both use it.
+- **Web app (PWA):** `manifest.webmanifest`, icons in `icons/`, and the service worker `sw.js` (network first, cache as offline fallback). When adding a file the app needs, add it to `DATEIEN` in `sw.js` and bump `CACHE_NAME`. The service worker only runs over http(s), not `file://`.
 - **Categories:** The categories are defined only once, as `<option>`s of `#kategorie` in `index.html`. The edit row copies its options from that select. To add or rename a category, change only the HTML.
 
 ## Regeln
