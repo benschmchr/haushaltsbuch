@@ -41,6 +41,18 @@ Vor dem Test `index.html` im Browser öffnen bzw. mit F5 neu laden.
 - [ ] Die größte Kategorie hat einen vollen Balken.
 - [ ] Beispiel: 50 € Lebensmittel und 20 € Freizeit. Der Freizeit-Balken ist etwa 40 % so lang.
 
+## Monatsbudget
+- [ ] Feld „Monatsbudget“ leer: Unter dem Feld steht kein Text und kein Balken.
+- [ ] Budget `100` eintragen, im Monat 50 € Ausgaben: Text „50,00 € von 100,00 € verbraucht (50 %) – noch 50,00 € übrig“, blauer Balken halb voll.
+- [ ] Ausgaben auf 80 € erhöhen: Text und Balken werden orange.
+- [ ] Ausgaben auf 120 € erhöhen: Balken voll und rot, Text „… (120 %) – 20,00 € über dem Budget“ in Rot.
+- [ ] Eine Ausgabe löschen oder bearbeiten: Text, Balken und Farbe passen sich sofort an.
+- [ ] Mit ‹ und › blättern: Das Budget bleibt gleich, der verbrauchte Anteil gilt jeweils für den angezeigten Monat.
+- [ ] Monat ohne Ausgaben: „0,00 € von 100,00 € verbraucht (0 %)“, leerer Balken.
+- [ ] Seite neu laden (F5): Das Budget steht noch im Feld.
+- [ ] Feld leeren: Text und Balken verschwinden, auch nach F5.
+- [ ] Handy-Ansicht: Feld und Text passen in den weißen Kasten.
+
 ## Monatsansicht
 - [ ] Beim Öffnen steht oben der aktuelle Monat, z. B. „Oktober 2026“.
 - [ ] Mit ‹ und › blättern: Liste und Summen zeigen nur den gewählten Monat.

@@ -2,7 +2,7 @@
 // damit das Haushaltsbuch auch ohne Internet startet.
 
 // Name des Speichers. Bei neuen Dateien in der Liste unten die Nummer erhöhen.
-const CACHE_NAME = "haushaltsbuch-v1";
+const CACHE_NAME = "haushaltsbuch-v2";
 
 // Alle Dateien, die die App zum Starten braucht
 const DATEIEN = [
