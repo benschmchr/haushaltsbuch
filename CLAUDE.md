@@ -21,6 +21,7 @@ Haushaltsbuch is a German-language expense tracker built with plain HTML, CSS an
 - Direkt auf `main` arbeiten und committen, keine eigenen Branches anlegen.
 - Nur HTML, CSS und JavaScript, keine Frameworks oder externen Bibliotheken.
 - Kleine Schritte: Nach jeder Änderung sagen, wie man sie im Browser prüfen kann.
+- Bei jeder neuen oder geänderten Funktion die `TESTS.md` mit aktualisieren.
 
 ## Conventions
 
