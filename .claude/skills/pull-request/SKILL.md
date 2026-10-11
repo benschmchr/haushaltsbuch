@@ -2,12 +2,27 @@
 name: pull-request
 description: Führt die Tests aus, committet bei Erfolg alle Änderungen mit deutscher Nachricht, pusht den Branch und legt bei Bedarf einen Pull Request auf GitHub an. Bricht ab, wenn ein Test fehlschlägt.
 disable-model-invocation: true
-allowed-tools: Bash(node --test:*), Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git branch:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*), Read, Grep, Glob
+allowed-tools:
+  - Bash(node --test:*)
+  - Bash(git status:*)
+  - Bash(git diff:*)
+  - Bash(git log:*)
+  - Bash(git branch --show-current)
+  - Bash(git add:*)
+  - Bash(git commit:*)
+  - Bash(git push -u origin:*)
+  - Bash("/c/Program Files/GitHub CLI/gh.exe" pr view:*)
+  - Bash("/c/Program Files/GitHub CLI/gh.exe" pr create:*)
+  - Read
+  - Grep
+  - Glob
 ---
 
 # Pull Request vorbereiten
 
 Antworte auf Deutsch und so, dass ein Anfänger es versteht. Arbeite die Schritte der Reihe nach ab und hör sofort auf, wenn ein Schritt scheitert.
+
+Niemals `git push --force` (oder `-f`) verwenden. Scheitert ein Push, abbrechen und erklären, statt ihn zu erzwingen.
 
 Die GitHub CLI liegt nicht im PATH. Rufe sie über den vollen Pfad auf: im Bash-Tool `"/c/Program Files/GitHub CLI/gh.exe"`, in PowerShell `& "C:\Program Files\GitHub CLI\gh.exe"`.
 
@@ -37,8 +52,15 @@ Die GitHub CLI liegt nicht im PATH. Rufe sie über den vollen Pfad auf: im Bash-
 ## 5. Pull Request
 
 - Prüfen, ob es für den Branch schon einen Pull Request gibt: `gh pr view --json url,state`.
+- **Meldet `gh pr view` „no pull requests found“, ist das kein Fehler**, sondern heißt nur: Es gibt noch keinen. Nicht abbrechen, sondern einen anlegen (siehe unten).
 - **Gibt es schon einen offenen:** keinen neuen anlegen, nur den Link nennen und sagen, dass der Push ihn aktualisiert hat.
-- **Gibt es keinen (oder nur einen geschlossenen/gemergten):** mit `gh pr create --base main --head <branch> --title "<Titel>" --body "<Beschreibung>"` anlegen. Titel und Beschreibung auf Deutsch. Die Beschreibung fasst alle Commits des Branches zusammen (`git log main..HEAD`) und sagt, wie man die Änderung im Browser prüfen kann.
+- **Gibt es keinen (oder nur einen geschlossenen/gemergten):** neu anlegen. Titel und Beschreibung auf Deutsch. Die Beschreibung fasst alle Commits des Branches zusammen (`git log main..HEAD`) und sagt, wie man die Änderung im Browser prüfen kann. Übergib die Beschreibung per Heredoc über `--body-file -`, damit Backticks, `$` und Anführungszeichen nicht von der Shell umgedeutet werden:
+
+  ```bash
+  "/c/Program Files/GitHub CLI/gh.exe" pr create --base main --head <branch> --title "<Titel>" --body-file - <<'EOF'
+  <Beschreibung, mehrzeilig>
+  EOF
+  ```
 
 ## Ausgabe
 
