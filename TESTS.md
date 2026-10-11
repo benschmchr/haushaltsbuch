@@ -1,6 +1,14 @@
 # Prüfliste
 
-Vor dem Test `index.html` im Browser öffnen bzw. mit F5 neu laden.
+## Automatische Tests
+Die Rechenlogik in `rechnen.js` (Gesamtsumme, Summen pro Kategorie, Monatsfilter, Budget in Prozent, Prüfung von Fehleingaben) wird automatisch getestet. Die Tests stehen in `tests/rechnen.test.js`.
+- [ ] Ein Terminal im Projektordner öffnen und `node --test` eingeben. Am Ende steht `pass 26` und `fail 0`.
+- [ ] Wenn ein Test fehlschlägt, steht dort ✖ mit dem Namen des Tests sowie dem erwarteten Wert (`expected`) und dem tatsächlichen Wert (`actual`).
+- [ ] Nach jeder Änderung an `rechnen.js` die Tests erneut starten.
+
+## Prüfung im Browser
+Vor dem Test `index.html` im Browser öffnen (Doppelklick genügt) bzw. mit F5 neu laden.
+- [ ] F12 → Reiter „Konsole“: Es stehen keine roten Fehlermeldungen dort.
 
 ## Ausgabe hinzufügen
 - [ ] Beim Öffnen steht im Feld „Datum“ das heutige Datum.
@@ -26,6 +34,7 @@ Vor dem Test `index.html` im Browser öffnen bzw. mit F5 neu laden.
 - [ ] Werte ändern und auf ↺ klicken: Die Änderung wird verworfen.
 - [ ] Fehleingabe: Betrag `0` oder leer, dann ✓: Es erscheint die Meldung „Bitte ein gültiges Datum und einen Betrag größer als 0 eingeben.“, und nichts wird geändert.
 - [ ] Fehleingabe: Datum löschen, dann ✓: Es erscheint dieselbe Meldung.
+- [ ] Fehleingabe: Betrag `1,234` (mehr als zwei Nachkommastellen), dann ✓: Es erscheint dieselbe Meldung.
 - [ ] Das Datum in einen anderen Monat ändern, dann ✓: Die Ansicht springt zu diesem Monat.
 
 ## Löschen (✕)

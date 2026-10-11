@@ -68,16 +68,9 @@ function alsIsoDatum(datum) {
   ].join("-");
 }
 
-// Nur die Ausgaben des gewählten Monats ("2026-10-..." beginnt mit "2026-10")
+// Nur die Ausgaben des gewählten Monats (nachMonatFiltern steht in rechnen.js)
 function ausgabenImMonat() {
-  return ausgaben.filter((a) => a.datum.startsWith(gewaehlterMonat));
-}
-
-// Summe der Beträge, auf ganze Cent gerundet.
-// Ohne Runden rechnet JavaScript z. B. 0,1 + 0,2 = 0,30000000000000004.
-function summeBerechnen(liste) {
-  const summe = liste.reduce((gesamt, a) => gesamt + a.betrag, 0);
-  return Math.round(summe * 100) / 100;
+  return nachMonatFiltern(ausgaben, gewaehlterMonat);
 }
 
 // Einen Monat vor (schritt = 1) oder zurück (schritt = -1) blättern
@@ -158,15 +151,16 @@ function anzeigen() {
 
 // Zeigen, wie viel vom Monatsbudget verbraucht ist – ab 80 % orange, darüber rot
 function budgetAnzeigen(summe) {
+  // Anteil, Prozent und Farbstufe ausrechnen (budgetAuswerten steht in rechnen.js)
+  const auswertung = budgetAuswerten(summe, budget);
+
   // Ohne Budget gibt es nichts anzuzeigen
-  const keinBudget = budget <= 0;
+  const keinBudget = auswertung === null;
   budgetText.hidden = keinBudget;
   budgetSpur.hidden = keinBudget;
   if (keinBudget) return;
 
-  // Anteil als Zahl: 0.5 = 50 %, 1 = 100 %, 1.2 = 120 %
-  const anteil = summe / budget;
-  const prozent = Math.round(anteil * 100);
+  const { anteil, prozent, stufe } = auswertung;
 
   let text = `${alsEuro(summe)} von ${alsEuro(budget)} verbraucht (${prozent} %) – `;
   if (summe > budget) {
@@ -180,26 +174,18 @@ function budgetAnzeigen(summe) {
   budgetBalken.style.width = Math.min(anteil, 1) * 100 + "%";
 
   // Farbe über CSS-Klassen: "warnung" = orange, "ueberschritten" = rot
-  const warnung = anteil >= 0.8 && anteil <= 1;
-  const ueberschritten = anteil > 1;
   for (const element of [budgetText, budgetBalken]) {
-    element.classList.toggle("warnung", warnung);
-    element.classList.toggle("ueberschritten", ueberschritten);
+    element.classList.toggle("warnung", stufe === "warnung");
+    element.classList.toggle("ueberschritten", stufe === "ueberschritten");
   }
 }
 
 // Summe pro Kategorie berechnen und mit Balken unter der Gesamtsumme anzeigen
 function kategorieSummenAnzeigen(monatsAusgaben) {
-  // Beträge pro Kategorie zusammenzählen, z. B. { Lebensmittel: 54.2, Freizeit: 20 }
-  const summen = {};
-  for (const ausgabe of monatsAusgaben) {
-    summen[ausgabe.kategorie] = (summen[ausgabe.kategorie] || 0) + ausgabe.betrag;
-  }
-
   kategorieSummenListe.innerHTML = "";
 
-  // Kategorien mit den höchsten Ausgaben zuerst
-  const sortiert = Object.entries(summen).sort((a, b) => b[1] - a[1]);
+  // Summen pro Kategorie, höchste zuerst (kategorieSummen steht in rechnen.js)
+  const sortiert = kategorieSummen(monatsAusgaben);
 
   // Die größte Kategorie steht zuerst – ihr Balken ist 100 % breit
   const groessterBetrag = sortiert.length > 0 ? sortiert[0][1] : 0;
@@ -318,7 +304,7 @@ function bearbeitungsZeile(ausgabe) {
   knopfZelle.appendChild(
     kleinerKnopf("✓", "Änderungen speichern", "speichern", () => {
       const neuerBetrag = parseFloat(betrag.value);
-      if (!datum.value || !(neuerBetrag > 0)) {
+      if (!eingabeGueltig(neuerBetrag, datum.value)) {
         alert("Bitte ein gültiges Datum und einen Betrag größer als 0 eingeben.");
         return;
       }
@@ -362,9 +348,16 @@ function loeschen(id) {
 formular.addEventListener("submit", (ereignis) => {
   ereignis.preventDefault(); // verhindert, dass die Seite neu lädt
 
+  // Zusätzliche Sicherheit, falls die Prüfung des Browsers etwas durchlässt
+  const betrag = parseFloat(betragFeld.value);
+  if (!eingabeGueltig(betrag, datumFeld.value)) {
+    alert("Bitte ein gültiges Datum und einen Betrag größer als 0 eingeben.");
+    return;
+  }
+
   ausgaben.push({
     id: Date.now(), // einfache eindeutige ID
-    betrag: parseFloat(betragFeld.value),
+    betrag: betrag,
     kategorie: kategorieFeld.value,
     datum: datumFeld.value,
     beschreibung: beschreibungFeld.value.trim(),
