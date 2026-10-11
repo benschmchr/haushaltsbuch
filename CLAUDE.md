@@ -27,6 +27,9 @@ Haushaltsbuch is a German-language expense tracker built with plain HTML, CSS an
 - Nur HTML, CSS und JavaScript, keine Frameworks. Externe Bibliotheken nur nach Rückfrage und nur als lokale Datei im Ordner `lib/`, nie aus dem Internet laden.
 - Kleine Schritte: Nach jeder Änderung sagen, wie man sie im Browser prüfen kann.
 - Bei jeder neuen oder geänderten Funktion die `TESTS.md` mit aktualisieren.
+- Nach jeder Codeänderung die Tests mit `node --test` ausführen und erst committen, wenn alle bestehen.
+- Neue Rechenlogik kommt nach `rechnen.js` und bekommt eigene Tests in `tests/rechnen.test.js`.
+- Bestehende Tests nie ändern, nur damit sie bestehen. Bei Zweifeln nachfragen.
 
 ## Conventions
 
